@@ -14,8 +14,9 @@ final class App: NSObject, NSApplicationDelegate {
     let brightnessLabel = NSTextField(labelWithString: "Brilho: 70%")
     let modes = ["solid", "pulse", "blink", "cycle"]
     let status = NSTextField(wrappingLabelWithString: "Escolha uma cor e clique em Aplicar. Depois, pode fechar a janela; o controle continua na barra de menus.")
-    var worker: Process?
-    var log: Pipe?
+    lazy var lighting = LightingController(
+        executable: Bundle.main.executableURL!.deletingLastPathComponent().appendingPathComponent("quadcastrgb")
+    ) { [weak self] text in self?.status.stringValue = text }
     func applicationDidFinishLaunching(_ notification: Notification) {
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 460, height: 730), styleMask: [.titled, .closable, .miniaturizable], backing: .buffered, defer: false)
         window.title = "HyperX Colors"
@@ -80,6 +81,9 @@ final class App: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
         menu.addItem(withTitle: "Sair", action: #selector(quit), keyEquivalent: "q").target = self
         statusItem.menu = menu
+        let workspace = NSWorkspace.shared.notificationCenter
+        workspace.addObserver(self, selector: #selector(willSleep), name: NSWorkspace.willSleepNotification, object: nil)
+        workspace.addObserver(self, selector: #selector(didWake), name: NSWorkspace.didWakeNotification, object: nil)
         if UserDefaults.standard.bool(forKey: "restoreOnLaunch") {
             if UserDefaults.standard.bool(forKey: "lightsOff") { turnOff() } else { applyColor() }
         }
@@ -145,28 +149,14 @@ final class App: NSObject, NSApplicationDelegate {
         start(arguments: arguments)
     }
     @objc func turnOff() { UserDefaults.standard.set(true, forKey: "lightsOff"); start(arguments: ["solid", "000000", "-b", "100"]) }
-    func start(arguments: [String]) {
-        if let old = worker, old.isRunning { old.terminate(); old.waitUntilExit() }
-        let task = Process(); let output = Pipe()
-        task.executableURL = Bundle.main.executableURL!.deletingLastPathComponent().appendingPathComponent("quadcastrgb")
-        task.arguments = arguments
-        task.standardError = output; task.standardOutput = FileHandle.nullDevice
-        task.terminationHandler = { [weak self] ended in
-            let data = output.fileHandleForReading.readDataToEndOfFile()
-            let detail = String(data: data, encoding: .utf8) ?? ""
-            DispatchQueue.main.async {
-                guard let self = self, self.worker === ended else { return }
-                if ended.terminationStatus != 0 {
-                    self.status.stringValue = "Não foi possível controlar o microfone. Verifique a conexão USB.\n" + detail.trimmingCharacters(in: .whitespacesAndNewlines)
-                } else { self.status.stringValue = "Controle de iluminação encerrado." }
-            }
-        }
-        worker = task; log = output
-        do { try task.run(); status.stringValue = "Iluminação ativa em segundo plano. Pode fechar esta janela. Para reabrir, use o microfone na barra de menus." }
-        catch { status.stringValue = "Não foi possível iniciar: \(error.localizedDescription)" }
-    }
+    func start(arguments: [String]) { lighting.apply(arguments) }
+    @objc func willSleep(_ notification: Notification) { lighting.sleep() }
+    @objc func didWake(_ notification: Notification) { lighting.wake() }
     @objc func quit() { NSApp.terminate(nil) }
-    func applicationWillTerminate(_ notification: Notification) { if worker?.isRunning == true { worker?.terminate() } }
+    func applicationWillTerminate(_ notification: Notification) {
+        NSWorkspace.shared.notificationCenter.removeObserver(self)
+        lighting.shutdown()
+    }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 }
 let app = NSApplication.shared

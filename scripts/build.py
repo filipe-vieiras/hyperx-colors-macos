@@ -11,7 +11,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / 'build'
 APP = ROOT / 'dist' / 'HyperX Colors.app'
-VERSION = '0.5.0'
+VERSION = '0.5.1'
 ENV = dict(os.environ, MACOSX_DEPLOYMENT_TARGET='13.0', COPYFILE_DISABLE='1', ac_cv_func_pipe2='no')
 
 def run(*args, cwd=ROOT):
@@ -52,7 +52,7 @@ run('clang', '-O2', '-DOS_MAC', '-DVERSION="1.0.5"', '-I' + str(prefix / 'includ
 run('install_name_tool', '-change', prefix / 'lib/libusb-1.0.0.dylib',
     '@executable_path/../Frameworks/libusb-1.0.0.dylib', mac / 'quadcastrgb')
 shutil.copyfile(prefix / 'lib/libusb-1.0.0.dylib', frameworks / 'libusb-1.0.0.dylib')
-run('swiftc', '-module-cache-path', BUILD / 'swift-cache', ROOT / 'Sources/main.swift',
+run('swiftc', '-module-cache-path', BUILD / 'swift-cache', ROOT / 'Sources/main.swift', ROOT / 'Sources/LightingController.swift',
     '-o', mac / 'HyperXColors', '-framework', 'AppKit', '-framework', 'ServiceManagement')
 iconset = BUILD / 'AppIcon.iconset'
 run('swift', '-module-cache-path', BUILD / 'swift-cache', ROOT / 'scripts/package-icon.swift', ROOT / 'Assets/AppIcon.png', iconset)
@@ -65,7 +65,7 @@ data = b''.join(chunks)
 (resources / 'AppIcon.icns').write_bytes(b'icns' + struct.pack('>I', len(data) + 8) + data)
 info = dict(CFBundleExecutable='HyperXColors', CFBundleIdentifier='local.hyperx.colors',
     CFBundleName='HyperX Colors', CFBundlePackageType='APPL', CFBundleShortVersionString=VERSION,
-    CFBundleVersion='5', CFBundleIconFile='AppIcon', LSMinimumSystemVersion='13.0',
+    CFBundleVersion='6', CFBundleIconFile='AppIcon', LSMinimumSystemVersion='13.0',
     NSHighResolutionCapable=True, LSUIElement=True)
 (APP / 'Contents/Info.plist').write_bytes(plistlib.dumps(info))
 shutil.copyfile(ROOT / 'LICENSE', resources / 'LICENSE.txt')
@@ -77,6 +77,9 @@ for binary in (frameworks / 'libusb-1.0.0.dylib', mac / 'quadcastrgb'):
 for name in ('com.apple.FinderInfo', 'com.apple.ResourceFork'):
     subprocess.run(['xattr', '-dr', name, str(APP)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 run('codesign', '--force', '--sign', '-', APP)
+# Finder can add icon metadata while the bundle is being built.
+for name in ('com.apple.FinderInfo', 'com.apple.ResourceFork'):
+    subprocess.run(['xattr', '-dr', name, str(APP)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 run('codesign', '--verify', '--deep', '--strict', APP)
 run('ditto', '-c', '-k', '--norsrc', '--keepParent', APP, ROOT / f'dist/HyperX-Colors-v{VERSION}.zip')
 print(f'Built: {APP}')

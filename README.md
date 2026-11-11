@@ -16,6 +16,7 @@ Um app gratuito e de código aberto para quem usa o QuadCast S no Mac e quer per
 - Efeitos de pulsar, piscar e arco-íris com controle de velocidade.
 - Botão para apagar a luz.
 - Restaurar iluminação: recria um ciclo arco-íris. **Não é uma restauração de firmware**; a velocidade exata de fábrica não foi confirmada.
+- Reaplica a última iluminação confirmada após repouso e tenta reconectar se o USB ainda não estiver disponível.
 - Funciona pela barra de menus, sem ocupar o Dock; fechar a janela mantém o controle ativo.
 - Opção **Abrir ao iniciar sessão**, com reaplicação da última iluminação escolhida.
 - Preferências locais; sem conta, anúncios, telemetria ou conexão de rede pelo app.
@@ -37,11 +38,11 @@ O app tem assinatura local (*ad hoc*), **sem Developer ID ou notarização da Ap
 
 Marque **Abrir ao iniciar sessão**. O macOS pode exigir aprovação nos seus Itens de Início; nesse caso, o app oferece um botão para abrir os ajustes. Desmarque para desativar. O início acontece ao entrar na sua conta, não antes do login.
 
-Com essa opção ativada, o app reaplica a última configuração ao abrir. Se o microfone ainda não estiver conectado, conecte-o e clique em Aplicar. Reconexão automática e reaplicação ao despertar ainda não estão implementadas. A janela de controles pode aparecer ao iniciar.
+Com essa opção ativada, o app reaplica a última configuração ao abrir. Se o microfone ainda não estiver conectado, conecte-o e clique em Aplicar. Após repouso, o app reabre a conexão USB e reaplica o último comando confirmado, tentando novamente a cada 3 segundos se o microfone estiver indisponível. Isso inclui luz apagada. Enquanto o app estiver rodando, também tenta recuperar o controle caso o processo USB seja interrompido. A janela de controles pode aparecer ao iniciar.
 
 ### Compatibilidade e estado
 
-**Experimental.** Cor fixa confirmada por um usuário com QuadCast S e Mac M4. Pulsar/piscar/arco-íris têm testes de geração de comandos, mas ainda precisam de confirmação física. A opção de início automático foi compilada, mas ainda precisa de um teste real de logout/login.
+**Experimental.** Cor fixa confirmada por um usuário com QuadCast S e Mac M4. Pulsar/piscar/arco-íris têm testes de geração de comandos, mas ainda precisam de confirmação física. A opção de início automático foi compilada, mas ainda precisa de um teste real de logout/login. A recuperação após repouso passou em testes simulados; ainda precisa ser confirmada em um ciclo real de repouso.
 
 Outros microfones HyperX não foram validados por este app, mesmo que o controlador original reconheça outros modelos. Não há garantia de persistência ao encerrar o app ou desconectar o microfone. Use apenas uma ferramenta de controle RGB por vez.
 
@@ -85,11 +86,11 @@ Requires **macOS 13+**. The initial binary targets **Apple Silicon**. Intel buil
 
 Enable **Abrir ao iniciar sessão**. macOS may require approval in Login Items; a button appears when approval is pending. Disable the checkbox to unregister. Move the app to Applications before enabling this feature. The app restores the last configuration on launch when enabled, including lights off. The controls window may appear at login.
 
-Automatic USB reconnection and wake recovery are not implemented. If your microphone was disconnected during startup, reconnect it and click Apply.
+Wake recovery reopens the USB connection and restores the last applied command, including lights off. If the helper exits while the microphone is unavailable, the app retries every 3 seconds until it can reconnect. The app must remain running. Unapplied window edits are not used for recovery.
 
 ### Status and build
 
-Experimental: solid-color control was physically confirmed on a QuadCast S with an M4 Mac. Animated effects have command-generation tests across 1,200 mode/speed/brightness combinations, but still need hardware confirmation. Launch-at-login compiles successfully but still needs a real logout/login test. Other microphone models are not validated. Settings may not persist after quitting or unplugging.
+Experimental: solid-color control was physically confirmed on a QuadCast S with an M4 Mac. Animated effects have command-generation tests across 1,200 mode/speed/brightness combinations, but still need hardware confirmation. Launch-at-login compiles successfully but still needs a real logout/login test. Wake recovery has automated simulated lifecycle tests, but still needs a real hardware sleep/wake check. Other microphone models are not validated. Settings may not persist after quitting or unplugging.
 
 Build on macOS with Python 3 and Apple command-line tools:
 

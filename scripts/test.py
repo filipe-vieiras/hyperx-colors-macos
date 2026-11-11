@@ -9,3 +9,9 @@ subprocess.run(['clang', '-g', '-fsanitize=address,undefined', '-fno-sanitize-re
     '-I' + str(source), '-I' + str(root / 'build/usb-install/include'), str(root / 'tests/check-effects.c'),
     str(source / 'argparser.c'), str(source / 'rgbmodes.c'), '-o', str(output)], check=True)
 subprocess.run([str(output)], check=True)
+
+controller_tests = root / 'build/controller-tests'
+subprocess.run(['swiftc', '-module-cache-path', str(root / 'build/swift-cache'),
+    str(root / 'Sources/LightingController.swift'), str(root / 'tests/controller-tests.swift'),
+    '-o', str(controller_tests)], check=True)
+subprocess.run([str(controller_tests)], check=True)
