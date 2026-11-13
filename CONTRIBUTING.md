@@ -5,7 +5,7 @@ Issues and pull requests are welcome. Contributions to project-authored code mus
 Before proposing a change:
 
 1. Build with `python3 scripts/build.py` on macOS.
-2. Run `python3 scripts/test.py`.
+2. Run `python3 scripts/test.py`. For interface changes, also run `python3 scripts/test.py --ui` in a graphical macOS session; this validates layout, color parsing and preview rendering without sending USB commands.
 3. For USB/lighting changes, report the device model and USB product/vendor identifiers, macOS version, Mac architecture, and physical observations. Do not claim hardware compatibility based only on packet tests.
 4. Test closing/reopening the window and quitting without orphaning the controller.
 5. For login changes, use a temporary user account if possible and verify registration, removal and a real login. Never enable launch at login without an explicit user action.

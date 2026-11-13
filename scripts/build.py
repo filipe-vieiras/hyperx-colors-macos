@@ -11,7 +11,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / 'build'
 APP = ROOT / 'dist' / 'HyperX Colors.app'
-VERSION = '0.5.2'
+VERSION = '0.6.0'
 ENV = dict(os.environ, MACOSX_DEPLOYMENT_TARGET='13.0', COPYFILE_DISABLE='1', ac_cv_func_pipe2='no')
 
 def run(*args, cwd=ROOT):
@@ -52,7 +52,7 @@ run('clang', '-O2', '-DOS_MAC', '-DVERSION="1.0.5"', '-I' + str(prefix / 'includ
 run('install_name_tool', '-change', prefix / 'lib/libusb-1.0.0.dylib',
     '@executable_path/../Frameworks/libusb-1.0.0.dylib', mac / 'quadcastrgb')
 shutil.copyfile(prefix / 'lib/libusb-1.0.0.dylib', frameworks / 'libusb-1.0.0.dylib')
-run('swiftc', '-module-cache-path', BUILD / 'swift-cache', ROOT / 'Sources/main.swift', ROOT / 'Sources/LightingController.swift',
+run('swiftc', '-module-cache-path', BUILD / 'swift-cache', *sorted((ROOT / 'Sources').glob('*.swift')),
     '-o', mac / 'HyperXColors', '-framework', 'AppKit', '-framework', 'ServiceManagement')
 iconset = BUILD / 'AppIcon.iconset'
 run('swift', '-module-cache-path', BUILD / 'swift-cache', ROOT / 'scripts/package-icon.swift', ROOT / 'Assets/AppIcon.png', iconset)
@@ -65,9 +65,10 @@ data = b''.join(chunks)
 (resources / 'AppIcon.icns').write_bytes(b'icns' + struct.pack('>I', len(data) + 8) + data)
 info = dict(CFBundleExecutable='HyperXColors', CFBundleIdentifier='local.hyperx.colors',
     CFBundleName='HyperX Colors', CFBundlePackageType='APPL', CFBundleShortVersionString=VERSION,
-    CFBundleVersion='7', CFBundleIconFile='AppIcon', LSMinimumSystemVersion='13.0',
+    CFBundleVersion='8', CFBundleIconFile='AppIcon', LSMinimumSystemVersion='13.0',
     NSHighResolutionCapable=True, LSUIElement=True, CFBundleDevelopmentRegion='en', CFBundleLocalizations=['en'])
 (APP / 'Contents/Info.plist').write_bytes(plistlib.dumps(info))
+shutil.copyfile(ROOT / 'Assets/AppIcon.png', resources / 'Microphone.png')
 shutil.copyfile(ROOT / 'LICENSE', resources / 'LICENSE.txt')
 shutil.copyfile(ROOT / 'THIRD_PARTY.md', resources / 'THIRD_PARTY.md')
 shutil.copyfile(ROOT / 'licenses/libusb-LGPL-2.1.txt', resources / 'libusb-LICENSE.txt')

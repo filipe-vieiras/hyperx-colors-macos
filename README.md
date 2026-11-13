@@ -12,6 +12,8 @@ Um app gratuito e de código aberto para quem usa o QuadCast S no Mac e quer per
 
 ### Recursos
 
+- Paleta integrada à janela: círculo de cores, amostras e entrada hexadecimal.
+- Prévia do microfone no topo: cor, brilho e animações atualizados instantaneamente.
 - Cor fixa com seletor de cores e ajuste de brilho.
 - Efeitos de pulsar, piscar e arco-íris com controle de velocidade.
 - Botão para apagar a luz.
@@ -27,7 +29,9 @@ Um app gratuito e de código aberto para quem usa o QuadCast S no Mac e quer per
 2. Descompacte e mova **HyperX Colors.app** para **Aplicativos** antes de ativar o início automático.
 3. Encerre qualquer versão antiga pelo menu **Quit** na barra de menus.
 4. Conecte seu QuadCast S e abra o app.
-5. Escolha o efeito, a cor, o brilho e a velocidade e clique em **Apply**.
+5. Escolha o efeito, a cor na paleta integrada, o brilho e a velocidade. A imagem do microfone muda imediatamente como prévia. Clique em **Apply** para enviar ao microfone.
+
+A prévia é uma simulação visual, não uma leitura do estado do hardware nem uma animação sincronizada com ele. A animação da imagem para quando a janela é fechada ou minimizada; o controle USB continua em segundo plano.
 6. Feche a janela ou clique em **Hide**. Para reabrir ou sair, use o ícone de microfone na barra de menus.
 
 O pacote público inicial é para **Apple Silicon (M1 ou posterior), macOS 13+**. Compilar em Intel deve gerar um app nativo para Intel, mas essa configuração não foi testada.
@@ -54,6 +58,8 @@ Requisitos: macOS 13+, Python 3 e ferramentas de linha de comando da Apple (ou X
 xcode-select --install
 python3 scripts/build.py
 python3 scripts/test.py
+# Optional native interface checks (requires a graphical macOS session):
+python3 scripts/test.py --ui
 ```
 
 O resultado fica em `dist/HyperX Colors.app`, junto do ZIP. O script compila a libusb a partir da fonte incluída, sem Homebrew ou downloads adicionais. As ferramentas da Apple podem precisar ser instaladas antes. O arquivo libusb é verificado por SHA-256.
@@ -74,7 +80,7 @@ Free, open-source, unofficial menu-bar lighting control for the **HyperX QuadCas
 
 ### Features
 
-Solid colors, brightness, pulse, blink and rainbow effects, animation speed, lights off, a recreated default-style rainbow, background operation, and optional launch at login with the last lighting configuration restored. Close the window to keep the app running; use the menu-bar microphone to reopen or quit.
+An inline color wheel, preset swatches and hex input. A microphone preview at the top responds immediately to color, brightness, pulse, blink and rainbow selections. Click Apply to send the selected configuration to the physical microphone. The preview is an independent visual approximation, not live hardware telemetry or an exactly synchronized animation. Preview animation stops while the window is closed or minimized. Brightness, speed, lights off, a recreated default-style rainbow, background operation, and optional launch at login with last-setting restoration are included. Close the window to keep the app running; use the menu-bar microphone to reopen or quit.
 
 ### Install
 
@@ -97,6 +103,8 @@ Build on macOS with Python 3 and Apple command-line tools:
 ```sh
 python3 scripts/build.py
 python3 scripts/test.py
+# Optional native interface checks (requires a graphical macOS session):
+python3 scripts/test.py --ui
 ```
 
 Output: `dist/HyperX Colors.app` and a ZIP. libusb source is bundled and checksum-verified; no Homebrew or dependency downloads are required by the build script.
