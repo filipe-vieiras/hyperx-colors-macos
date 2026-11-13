@@ -11,7 +11,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / 'build'
 APP = ROOT / 'dist' / 'HyperX Colors.app'
-VERSION = '0.5.1'
+VERSION = '0.5.2'
 ENV = dict(os.environ, MACOSX_DEPLOYMENT_TARGET='13.0', COPYFILE_DISABLE='1', ac_cv_func_pipe2='no')
 
 def run(*args, cwd=ROOT):
@@ -65,8 +65,8 @@ data = b''.join(chunks)
 (resources / 'AppIcon.icns').write_bytes(b'icns' + struct.pack('>I', len(data) + 8) + data)
 info = dict(CFBundleExecutable='HyperXColors', CFBundleIdentifier='local.hyperx.colors',
     CFBundleName='HyperX Colors', CFBundlePackageType='APPL', CFBundleShortVersionString=VERSION,
-    CFBundleVersion='6', CFBundleIconFile='AppIcon', LSMinimumSystemVersion='13.0',
-    NSHighResolutionCapable=True, LSUIElement=True)
+    CFBundleVersion='7', CFBundleIconFile='AppIcon', LSMinimumSystemVersion='13.0',
+    NSHighResolutionCapable=True, LSUIElement=True, CFBundleDevelopmentRegion='en', CFBundleLocalizations=['en'])
 (APP / 'Contents/Info.plist').write_bytes(plistlib.dumps(info))
 shutil.copyfile(ROOT / 'LICENSE', resources / 'LICENSE.txt')
 shutil.copyfile(ROOT / 'THIRD_PARTY.md', resources / 'THIRD_PARTY.md')

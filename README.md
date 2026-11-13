@@ -18,17 +18,17 @@ Um app gratuito e de código aberto para quem usa o QuadCast S no Mac e quer per
 - Restaurar iluminação: recria um ciclo arco-íris. **Não é uma restauração de firmware**; a velocidade exata de fábrica não foi confirmada.
 - Reaplica a última iluminação confirmada após repouso e tenta reconectar se o USB ainda não estiver disponível.
 - Funciona pela barra de menus, sem ocupar o Dock; fechar a janela mantém o controle ativo.
-- Opção **Abrir ao iniciar sessão**, com reaplicação da última iluminação escolhida.
+- Opção **Launch at login**, com reaplicação da última iluminação escolhida.
 - Preferências locais; sem conta, anúncios, telemetria ou conexão de rede pelo app.
 
 ### Baixar e usar
 
 1. Baixe o ZIP em [Releases](https://github.com/filipe-vieiras/hyperx-colors-macos/releases/latest).
 2. Descompacte e mova **HyperX Colors.app** para **Aplicativos** antes de ativar o início automático.
-3. Encerre qualquer versão antiga pelo menu **Sair** na barra de menus.
+3. Encerre qualquer versão antiga pelo menu **Quit** na barra de menus.
 4. Conecte seu QuadCast S e abra o app.
-5. Escolha o efeito, a cor, o brilho e a velocidade e clique em **Aplicar**.
-6. Feche a janela ou clique em **Ocultar**. Para reabrir ou sair, use o ícone de microfone na barra de menus.
+5. Escolha o efeito, a cor, o brilho e a velocidade e clique em **Apply**.
+6. Feche a janela ou clique em **Hide**. Para reabrir ou sair, use o ícone de microfone na barra de menus.
 
 O pacote público inicial é para **Apple Silicon (M1 ou posterior), macOS 13+**. Compilar em Intel deve gerar um app nativo para Intel, mas essa configuração não foi testada.
 
@@ -36,7 +36,7 @@ O app tem assinatura local (*ad hoc*), **sem Developer ID ou notarização da Ap
 
 ### Iniciar com o Mac
 
-Marque **Abrir ao iniciar sessão**. O macOS pode exigir aprovação nos seus Itens de Início; nesse caso, o app oferece um botão para abrir os ajustes. Desmarque para desativar. O início acontece ao entrar na sua conta, não antes do login.
+Marque **Launch at login**. O macOS pode exigir aprovação nos seus Itens de Início; nesse caso, o app oferece um botão para abrir os ajustes. Desmarque para desativar. O início acontece ao entrar na sua conta, não antes do login.
 
 Com essa opção ativada, o app reaplica a última configuração ao abrir. Se o microfone ainda não estiver conectado, conecte-o e clique em Aplicar. Após repouso, o app reabre a conexão USB e reaplica o último comando confirmado, tentando novamente a cada 3 segundos se o microfone estiver indisponível. Isso inclui luz apagada. Enquanto o app estiver rodando, também tenta recuperar o controle caso o processo USB seja interrompido. A janela de controles pode aparecer ao iniciar.
 
@@ -78,13 +78,13 @@ Solid colors, brightness, pulse, blink and rainbow effects, animation speed, lig
 
 ### Install
 
-Download the Apple Silicon ZIP from [Releases](https://github.com/filipe-vieiras/hyperx-colors-macos/releases/latest), extract it, move the app to **Applications**, quit older instances, connect your microphone and open the app. Choose a mode and click **Aplicar** (Apply). The interface is currently in Portuguese.
+Download the Apple Silicon ZIP from [Releases](https://github.com/filipe-vieiras/hyperx-colors-macos/releases/latest), extract it, move the app to **Applications**, quit older instances, connect your microphone and open the app. Choose a mode and click **Apply** (Apply). The interface is in English.
 
 Requires **macOS 13+**. The initial binary targets **Apple Silicon**. Intel builds are untested. The app is ad-hoc signed and **not Apple-notarized**. If macOS blocks it, follow [Apple's official guidance](https://support.apple.com/102445) only if you trust this project, or build from source.
 
 ### Launch at login
 
-Enable **Abrir ao iniciar sessão**. macOS may require approval in Login Items; a button appears when approval is pending. Disable the checkbox to unregister. Move the app to Applications before enabling this feature. The app restores the last configuration on launch when enabled, including lights off. The controls window may appear at login.
+Enable **Launch at login**. macOS may require approval in Login Items; a button appears when approval is pending. Disable the checkbox to unregister. Move the app to Applications before enabling this feature. The app restores the last configuration on launch when enabled, including lights off. The controls window may appear at login.
 
 Wake recovery reopens the USB connection and restores the last applied command, including lights off. If the helper exits while the microphone is unavailable, the app retries every 3 seconds until it can reconnect. The app must remain running. Unapplied window edits are not used for recovery.
 

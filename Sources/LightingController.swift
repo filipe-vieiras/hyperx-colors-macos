@@ -47,7 +47,7 @@ final class LightingController {
             // Even a helper that survived sleep may hold an obsolete USB handle.
             self.stopWorker()
             guard self.desired != nil else { return }
-            self.message("Restaurando a iluminação após o repouso…")
+            self.message("Restoring lighting after sleep…")
             self.schedule(after: self.wakeDelay)
         }
     }
@@ -107,17 +107,17 @@ final class LightingController {
                 guard self.worker === ended else { return }
                 self.worker = nil
                 guard self.desired != nil, !self.suspended else { return }
-                self.message("Aguardando o microfone. A iluminação será reaplicada automaticamente (código \(ended.terminationStatus)).")
+                self.message("Waiting for the microphone. Lighting will be restored automatically (code \(ended.terminationStatus)).")
                 self.schedule(after: self.retryDelay)
             }
         }
         worker = task
         do {
             try task.run()
-            message("Controle de iluminação ativo. Pode fechar esta janela; a recuperação após repouso é automática.")
+            message("Lighting control is active. You can close this window; recovery after sleep is automatic.")
         } catch {
             worker = nil
-            message("Não foi possível iniciar o controle. Tentando novamente… \(error.localizedDescription)")
+            message("Could not start lighting control. Retrying… \(error.localizedDescription)")
             schedule(after: retryDelay)
         }
     }
